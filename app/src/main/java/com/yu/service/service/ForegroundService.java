@@ -31,6 +31,7 @@ public class ForegroundService extends Service {
         Notification noti = new NotificationCompat.Builder(this)
                 .setContentTitle("this is title")
                 .setContentText("this is text")
+                .setWhen(System.currentTimeMillis())
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pi).build();
