@@ -40,16 +40,16 @@ public class DownloadService extends Service {
         super.onDestroy();
     }
 
-    public interface TaskStateChangeControl {
-        void startTask();
-        void stopTask();
-    }
-
     class Proxy extends Binder implements TaskStateChangeControl {
 
         @Override
         public void startTask() {
             Log.e(TAG, "startTask");
+        }
+
+        @Override
+        public void getTaskProgress() {
+            Log.e(TAG, "getTaskProgress");
         }
 
         @Override

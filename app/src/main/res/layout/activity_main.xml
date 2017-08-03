@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.yu.service.MainActivity">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/startForegroundService"
+        android:layout_above="@+id/id_ll_service_ops"
+        android:textAllCaps="false"
+        android:onClick="startForegroundService"/>
     <LinearLayout
         android:id="@+id/id_ll_service_ops"
         android:layout_width="match_parent"

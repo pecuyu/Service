@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.yu.service.async.DownloadAsyncTask;
 import com.yu.service.async.TaskStateChangeCallback;
 import com.yu.service.service.DownloadService;
+import com.yu.service.service.ForegroundService;
+import com.yu.service.service.TaskStateChangeControl;
 
 public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
@@ -41,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     public void bindService(View view) {
         Intent intent = new Intent(this, DownloadService.class);
         conn = new ServiceConnection() {
-            DownloadService.TaskStateChangeControl control;
+            TaskStateChangeControl control;
 
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                control = (DownloadService.TaskStateChangeControl) service;
+                control = (TaskStateChangeControl) service;
                 control.startTask();
             }
 
@@ -57,12 +59,18 @@ public class MainActivity extends AppCompatActivity {
 
         bindService(intent,conn , BIND_AUTO_CREATE);
     }
-
     public void unbindService(View view) {
         Intent intent = new Intent(this, DownloadService.class);
-        unbindService(conn);
+        if (conn != null) {
+            unbindService(conn);
+            conn = null;
+        }
     }
 
+    public void startForegroundService(View view) {
+        Intent intent = new Intent(this, ForegroundService.class);
+        startService(intent);
+    }
 
     /**
      * 启动异步任务
