@@ -1,4 +1,4 @@
-package com.yu.service;
+package com.yu.service.async;
 
 import android.os.AsyncTask;
 import android.os.SystemClock;

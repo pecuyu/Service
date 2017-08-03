@@ -1,4 +1,4 @@
-package com.yu.service;
+package com.yu.service.async;
 
 /**
  * Created by D22436 on 2017/8/3.
