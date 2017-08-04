@@ -14,7 +14,7 @@ public class AsyncIntentService  extends IntentService {
      * @param name Used to name the worker thread, important only for debugging.
      */
     public AsyncIntentService(String name) {
-        super(name);
+        super("AsyncIntentService");
     }
 
     @Override

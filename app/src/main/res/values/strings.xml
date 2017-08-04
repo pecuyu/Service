@@ -3,4 +3,7 @@
     <string name="starttask">startTask</string>
     <string name="progress">0%</string>
     <string name="startForegroundService">startForegroundService</string>
+    <string name="startDownload">下载</string>
+    <string name="pauseDownload">暂停</string>
+    <string name="cancelDownload">取消</string>
 </resources>

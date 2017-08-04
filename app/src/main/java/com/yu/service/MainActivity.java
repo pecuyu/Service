@@ -1,11 +1,18 @@
 package com.yu.service;
 
+import android.Manifest;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -13,6 +20,7 @@ import android.widget.Toast;
 
 import com.yu.service.async.DownloadAsyncTask;
 import com.yu.service.async.TaskStateChangeCallback;
+import com.yu.service.download.IDownloadController;
 import com.yu.service.service.DownloadService;
 import com.yu.service.service.ForegroundService;
 import com.yu.service.service.TaskStateChangeControl;
@@ -21,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TextView tvProgress;
     ServiceConnection conn;
+    private String downloadUrl="http://gdown.baidu.com/data/wisegame/74ac7c397e120549/QQ_708.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         progressBar = (ProgressBar) findViewById(R.id.id_task_progressBar);
         tvProgress = (TextView) findViewById(R.id.id_textView_progress);
+
+        // 绑定服务
+        dlConn = new DownloadServiceConnection();
+        Intent intent = new Intent(this, com.yu.service.download.DownloadService.class);
+        startService(intent);
+        bindService(intent, dlConn, Context.BIND_AUTO_CREATE);
+
+        checkPermission();
+    }
+
+    private void checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
     }
 
     /*  服务 */
@@ -93,4 +116,60 @@ public class MainActivity extends AppCompatActivity {
             }
         }).execute(1000);
     }
+
+    /* 下载 */
+    IDownloadController controller;
+    DownloadServiceConnection dlConn;
+
+    public void startDownload(View view) {
+
+        if (controller!=null) controller.startDownload(downloadUrl);
+    }
+    public void pauseDownload(View view) {
+        if (controller!=null){
+            controller.pauseDownload();
+        }
+    }
+    public void cancelDownload(View view) {
+        if (controller!=null) controller.cancelDownload();
+    }
+
+    class DownloadServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            controller = (IDownloadController) service;
+            Log.e("TAG", "onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dlConn !=null) unbindService(dlConn);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "granted permission", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "you denied permission", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                break;
+
+        }
+    }
 }
+
+

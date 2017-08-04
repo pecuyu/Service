@@ -6,7 +6,39 @@
     android:layout_height="match_parent"
     tools:context="com.yu.service.MainActivity">
 
+    <LinearLayout
+        android:id="@+id/id_ll_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/id_btn_startForegroundService"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:onClick="startDownload"
+            android:text="@string/startDownload"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:onClick="pauseDownload"
+            android:text="@string/pauseDownload"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:onClick="cancelDownload"
+            android:text="@string/cancelDownload"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
     <Button
+        android:id="@+id/id_btn_startForegroundService"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/startForegroundService"

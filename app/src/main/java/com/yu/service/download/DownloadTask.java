@@ -1,7 +1,6 @@
 package com.yu.service.download;
 
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,15 +40,15 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
     protected Integer doInBackground(String... params) {
         long downloadLength = 0; /*已经下载的长度*/
         String downloadUrl = params[0];  /*下载链接*/
-        String fileName = getFileName(downloadUrl); /*文件名*/
+        String fileName = Utils.getFileName(downloadUrl); /*文件名*/
         InputStream is = null;
         RandomAccessFile savedFile = null;  /*将要下载并保存的文件*/
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
+        File file = new File(Utils.getExternalDownloadDir(), fileName);
         if (file.exists()) {    /*如果文件已经存在*/
             downloadLength = file.length();
         }
         try {
-            long contentLength = getDownloadFileLength(downloadUrl);
+            long contentLength = Utils.getDownloadFileLength(downloadUrl);
             if (contentLength == 0) {  /*获取下载文件大小失败*/
                 return TYPE_FAILED;
             }
@@ -153,34 +152,4 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
         isCanceled = true;
     }
 
-    /**
-     * 获取文件长度
-     *
-     * @param downloadUrl
-     * @return
-     * @throws IOException
-     */
-    private long getDownloadFileLength(String downloadUrl) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(downloadUrl).build();
-        Response response = client.newCall(request).execute();
-        long contentLength = 0;
-        if (response != null && response.isSuccessful()) {
-            contentLength = response.body().contentLength();
-            response.close();
-            return contentLength;
-        }
-        return contentLength;
-    }
-
-    /**
-     * 获取文件名
-     *
-     * @param path
-     * @return
-     */
-    public String getFileName(String path) {
-        int index = path.lastIndexOf("/");
-        return path.substring(index + 1);
-    }
 }
