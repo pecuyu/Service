@@ -1,6 +1,7 @@
 package com.yu.service.download;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +38,7 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
         long downloadLength = 0; /*已经下载的长度*/
         String downloadUrl = params[0];  /*下载链接*/
         String fileName = Utils.getFileName(downloadUrl); /*文件名*/
@@ -49,6 +50,7 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
         }
         try {
             long contentLength = Utils.getDownloadFileLength(downloadUrl);
+            Log.e("TAG","contentLength="+ contentLength);
             if (contentLength == 0) {  /*获取下载文件大小失败*/
                 return TYPE_FAILED;
             }
@@ -58,7 +60,7 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().
                     url(downloadUrl)
-                    .addHeader("RANGE", "bytes=" + downloadUrl + "-") /*支持断点下载，指定从哪个字节开始下载*/
+                    .addHeader("RANGE", "bytes=" + downloadLength + "-") /*支持断点下载，指定从哪个字节开始下载*/
                     .build();
             Response response = client.newCall(request).execute();
             if (response != null) {

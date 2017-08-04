@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,10 +28,12 @@ import com.yu.service.service.ForegroundService;
 import com.yu.service.service.TaskStateChangeControl;
 
 public class MainActivity extends AppCompatActivity {
-    ProgressBar progressBar;
-    TextView tvProgress;
+    static ProgressBar progressBar;
+    static TextView tvProgress;
     ServiceConnection conn;
     private String downloadUrl="http://gdown.baidu.com/data/wisegame/74ac7c397e120549/QQ_708.apk";
+    /*来自download service的消息*/
+    public static final int MSG_PROGRESS_UPDATE_FOME_DOWNLOAD_SERVICE = 0x66;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +174,24 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+
+    /**
+     * 主线程Handler，处理各种 线程消息
+     */
+    public static Handler sMainHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case   MSG_PROGRESS_UPDATE_FOME_DOWNLOAD_SERVICE:
+                    int progress = msg.arg1;
+                    progressBar.setProgress(progress);
+                    tvProgress.setText(progress+"%");
+                    break;
+            }
+        }
+    };
 }
 
 

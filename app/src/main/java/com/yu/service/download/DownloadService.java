@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ import java.io.File;
 
 public class DownloadService extends Service {
     private DownloadTask mTask;
-    private MyDownloadStateListener listener;
+    private MyDownloadStateListener mListener;
     private String mDownloadUrl;
 
     @Override
@@ -66,14 +67,20 @@ public class DownloadService extends Service {
         @Override
         public void onCancel() {
             mTask = null;
-            stopForeground(true);
             Toast.makeText(DownloadService.this, "download canceled", Toast.LENGTH_SHORT).show();
+            stopForeground(true);
 
         }
 
         @Override
         public void onProgressUpdate(int progress) {
-            getNotificationManager().notify(1, getNotification(progress, "downlaod..."));
+            getNotificationManager().notify(1, getNotification(progress, String.format("%s downlaoding",Utils.getFileName(mDownloadUrl))));
+            if (MainActivity.sMainHandler != null) {
+                Message msg = MainActivity.sMainHandler.obtainMessage();
+                msg.what = MainActivity.MSG_PROGRESS_UPDATE_FOME_DOWNLOAD_SERVICE;
+                msg.arg1 = progress;
+                msg.sendToTarget();
+            }
         }
     }
 
@@ -90,10 +97,10 @@ public class DownloadService extends Service {
             }
             mDownloadUrl = downloadUrl;
             if (mTask == null) {
-                listener = new MyDownloadStateListener();
-                mTask = new DownloadTask(listener);
+                mListener = new MyDownloadStateListener();
+                mTask = new DownloadTask(mListener);
                 mTask.execute(downloadUrl);
-                startForeground(1, getNotification(0, "download..."));
+                startForeground(1, getNotification(0,String.format("%s downlaoding",Utils.getFileName(mDownloadUrl))));
             }
             Log.e("TAG", "startDownload");
         }
@@ -124,7 +131,7 @@ public class DownloadService extends Service {
             // 取消通知
             getNotificationManager().cancel(1);
             stopForeground(true);
-            Toast.makeText(DownloadService.this, "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DownloadService.this, "cancelDownload", Toast.LENGTH_SHORT).show();
         }
     }
 
