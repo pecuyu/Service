@@ -6,6 +6,8 @@ package com.yu.service.async;
  */
 
 public interface TaskStateChangeCallback<Progress, Result> {
+    void onPreTaskExecute();
+
     void onTaskProgressUpdate(Progress progress);
 
     void onTaskPostExecute(Result result);

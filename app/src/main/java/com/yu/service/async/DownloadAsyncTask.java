@@ -20,6 +20,7 @@ public class DownloadAsyncTask extends AsyncTask<Integer,Integer,Integer> {
     protected void onPreExecute() {
         super.onPreExecute();
         Log.e(TAG, "prepare task：" + Thread.currentThread().getName());
+        if (callback!=null) callback.onPreTaskExecute();
     }
 
     @Override
@@ -39,8 +40,6 @@ public class DownloadAsyncTask extends AsyncTask<Integer,Integer,Integer> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        Log.e(TAG, "update task：" + Thread.currentThread().getName());
-
         super.onProgressUpdate(values);
         if (callback != null) {
             callback.onTaskProgressUpdate(values[0]);

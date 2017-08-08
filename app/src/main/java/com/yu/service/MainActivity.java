@@ -49,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
         bindService(intent, dlConn, Context.BIND_AUTO_CREATE);
 
         checkPermission();
+
+
+//        new DownloadAsyncTask(new TaskStateChangeCallbackAdapter<Integer, Integer>() {
+//            @Override
+//            public void onPreTaskExecute() {
+//                Log.e("TAG", "onPreTaskExecute1");
+//            }
+//
+//            @Override
+//            public void onTaskPostExecute(Integer integer) {
+//                Log.e("TAG", "onTaskPostExecute1");
+//            }
+//        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,100); // 异步任务
+
     }
 
     private void checkPermission() {
@@ -106,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
     public void startTask(View view) {
         final long time = System.currentTimeMillis();
         new DownloadAsyncTask(new TaskStateChangeCallback<Integer, Integer>() {
+            @Override
+            public void onPreTaskExecute() {
+
+            }
+
             @Override
             public void onTaskProgressUpdate(Integer progress) {
                 progressBar.setProgress(progress);
